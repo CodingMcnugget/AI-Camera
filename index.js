@@ -1,35 +1,54 @@
 import express from "express";
-import multer from "multer";
 import Replicate from "replicate";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-app.use("/uploads", express.static("uploads"));
-const upload = multer({ dest: "uploads/" }); // 设置文件的临时保存路径
-const replicate = new Replicate();
-app.use(express.static("public"));
 
-// 修改此处以处理POST请求
-app.post("/api/", upload.single("image"), async (req, res) => {
-  // 假设您的表单数据中文件字段的名字为'image'
+// Configure body parser for JSON including large encoded data
+app.use(express.json({ limit: "10mb" }));
+// Serve static files from the public directory
+app.use(express.static("public"));
+// Serve uploaded files
+app.use("/uploads", express.static("uploads"));
+
+const replicate = new Replicate();
+
+app.post("/api/image", async (req, res) => {
   console.log("Received image for processing");
 
   try {
-    // 构建图片URL，使其可以通过Replicate API访问
-    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
-    console.log(`Calling Replicate API with uploaded image at ${imageUrl}`);
+    const imageData = req.body.image.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(imageData, "base64");
+    const filename = `tempImage_${Date.now()}.jpg`;
+    const filepath = path.join(__dirname, "uploads", filename);
+    fs.writeFileSync(filepath, buffer);
+
+    const imageUrl = `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+    console.log(`Public URL for the uploaded image: ${imageUrl}`);
+
     const output = await replicate.run(
-      "schananas/grounded_sam:ee871c19efb1941f55f66a3d7d960428c8a5afcb77449547fe8e5a3ab9ebc21c",
+      "sujaykhandekar/object-removal:153b0087c2576ad30d8cbddb35275b387d1a6bf986bda5499948f843f6460faf",
       {
         input: {
-          image: imageUrl, // 现在使用的是可访问的图片URL
-          // 其他参数
+          image_path: imageUrl,
+          objects_to_remove: "person" 
+          // input_image: imageUrl,
+          // image: imageUrl,
+          // mask_prompt: "Human",
+          // adjustment_factor: -25,
+          // negative_mask_prompt: "Wheels",
         },
       },
     );
     console.log("Replicate API call successful. Output:", output);
+    res.send({ result: output.result });
+    
 
-    // 假设output中包含处理后的图片URL
-    res.send({ result: output.result }); // 根据API返回的实际结果调整这里的字段
+    // Clean up the temporary image file after processing
+    fs.unlinkSync(filepath);
   } catch (error) {
     console.error("Error during Replicate API call:", error);
     res
