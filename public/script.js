@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const video = document.getElementById("video");
   const captureButton = document.getElementById("processImage");
-  const resultImage = document.getElementById("resultImage");
+
   // 准备一个canvas来捕获和发送图像
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
@@ -32,8 +32,8 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then((response) => response.json())
       .then((data) => {
-        // 显示处理后的图像或执行其他操作
         console.log(data.result);
+        const resultImage = document.getElementById("resultImage");
         resultImage.src = data.result;
       })
       .catch((err) => {
