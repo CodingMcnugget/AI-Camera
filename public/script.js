@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const video = document.getElementById("video");
   const captureButton = document.getElementById("processImage");
 
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch((err) => {
       console.error("Error accessing the camera", err);
     });
-  captureButton.addEventListener("click", () => {
+  captureButton.addEventListener("click", async () => {
     // set the canvas size same as video size
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -22,12 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     // convert the screen shot to base64 URL
     // const imageDataUrl = canvas.toDataURL("image/jpeg");
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       console.log(blob);
       let formData = new FormData();
-      formData.append("my-file", blob, "filename.png");
+      formData.append("my-file", blob, "filename.jpeg");
       // send the image to the server
-      fetch("/api/image", {
+      await fetch("/api/image", {
         method: "POST",
         // headers: {
         //   "Content-Type": "multipart/form-data",
@@ -44,6 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((err) => {
           console.error("Failed to send image", err);
         });
-    });
+    }, "image/jpeg");
   });
 });
