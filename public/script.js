@@ -1,3 +1,12 @@
+// 建立连接
+const socket = io();
+
+// 监听来自服务器的指令
+socket.on('instruction', (data) => {
+    console.log('Instruction from server:', data.message);
+    // 根据指令执行操作，例如触发图片捕获
+});
+
 document.addEventListener("DOMContentLoaded", async function () {
   const video = document.getElementById("video");
   const captureButton = document.getElementById("processImage");

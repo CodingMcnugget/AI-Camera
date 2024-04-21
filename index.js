@@ -4,20 +4,35 @@ import Replicate from "replicate";
 
 import bodyparser from "body-parser";
 import multer from "multer";
-
+import http from "http";
 import path from "path";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+
+import { Server } from 'socket.io';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-
+const server = http.createServer(app);
+const io = new Server(server);
 // Configure body parser for JSON including large encoded data
 // app.use(express.json({ limit: "10mb" }));
 const Urlencoded = bodyparser.urlencoded({ extended: true });
 // const upload = multer({ dest: "public/images" });
+
+
+io.on('connection', (socket) => {
+    console.log('A user connected');
+    socket.emit('instruction', { message: 'Trigger capture on front-end.' });
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+    });
+});
+
+
 
 // Serve static files from the public directory
 app.use(express.static("public"));
@@ -36,6 +51,18 @@ const upload = multer({ storage: storage });
 // app.use("/uploads", express.static("uploads"));
 app.use(Urlencoded);
 const replicate = new Replicate();
+
+app.post("/button/pressed/high", (req, res) => {
+    // 这里处理按钮按下的逻辑，例如触发图片捕捉或其他
+    console.log("Button press signal received.");
+    // 响应给app.py
+    io.emit('buttonPressed', { message: 'The button was pressed' });
+    // 响应给发起请求的客户端
+   
+    res.status(200).json({ message: "Button press received" });
+});
+
+
 
 app.post("/api/image", upload.single("my-file"), async (req, res) => {
   console.log("Received image for processing");

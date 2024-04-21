@@ -18,6 +18,8 @@
     "multer": "^1.4.5-lts.1",
     "node-fetch": "^3.3.2",
     "replicate": "^0.29.1",
-    "skipper": "^0.9.4"
+    "requests": "^0.3.0",
+    "skipper": "^0.9.4",
+    "socket.io": "^4.7.5"
   }
 }

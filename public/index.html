@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Processor</title>
     <link rel="stylesheet" href="style.css" />
+   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
     <!-- Video element for displaying camera feed -->
@@ -13,6 +14,6 @@
     <button id="processImage">Capture Image</button>
     <!-- Element for displaying the processed image -->
     <img id="resultImage" src="placeholder.jpg" alt="Result image" />
-    <script src="script.js"></script>
+    <script defer src="script.js"></script>
 </body>
 </html>
