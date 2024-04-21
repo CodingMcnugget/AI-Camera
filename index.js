@@ -62,7 +62,7 @@ app.post("/api/image", upload.single("my-file"), async (req, res) => {
     res.send({ result: output.result });
 
     // Clean up the temporary image file after processing
-    fs.unlinkSync(filepath);
+    // fs.unlinkSync(filepath);
   } catch (error) {
     console.error("Error during Replicate API call:", error);
     res
