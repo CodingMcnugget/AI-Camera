@@ -14,36 +14,46 @@ document.addEventListener("DOMContentLoaded", async function () {
     .catch((err) => {
       console.error("Error accessing the camera", err);
     });
-  captureButton.addEventListener("click", async () => {
-    // set the canvas size same as video size
+
+  // Polling for button press signal
+  async function pollButtonPress() {
+    try {
+      const response = await fetch('/button/pressed/high');
+      const data = await response.json();
+      if (data.capture) {
+        captureImage();
+      }
+    } catch (error) {
+      console.error("Error polling button press", error);
+    }
+  }
+
+  function captureImage() {
+    console.log("Capturing image due to button press...");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    // dislay the video on canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    // convert the screen shot to base64 URL
-    // const imageDataUrl = canvas.toDataURL("image/jpeg");
     canvas.toBlob(async (blob) => {
       console.log(blob);
       let formData = new FormData();
       formData.append("my-file", blob, "filename.jpeg");
-      // send the image to the server
-      await fetch("/api/image", {
-        method: "POST",
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
-        // body: JSON.stringify({ image: imageDataUrl }),
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data.result);
-          const resultImage = document.getElementById("resultImage");
-          resultImage.src = data.result;
-        })
-        .catch((err) => {
-          console.error("Failed to send image", err);
+      try {
+        const response = await fetch("/api/image", {
+          method: "POST",
+          body: formData,
         });
+        const data = await response.json();
+        console.log(data.result);
+        const resultImage = document.getElementById("resultImage");
+        resultImage.src = data.result;
+      } catch (err) {
+        console.error("Failed to send image", err);
+      }
     }, "image/jpeg");
-  });
+  }
+
+  captureButton.addEventListener("click", captureImage);
+
+  // Start polling
+  setInterval(pollButtonPress, 3000);
 });

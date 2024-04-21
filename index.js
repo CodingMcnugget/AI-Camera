@@ -45,26 +45,26 @@ app.post("/api/image", upload.single("my-file"), async (req, res) => {
     console.log(`Public URL for the uploaded image: ${imageUrl}`);
 
     const output = await replicate.run(
-      "sujaykhandekar/object-removal:153b0087c2576ad30d8cbddb35275b387d1a6bf986bda5499948f843f6460faf",
+      "daanelson/plug_and_play_image_translation:ae10351e6de912fa681854e472bb7aff011411f2c3802b2ccd836a2a22408069",
       {
         input: {
-          image_path: imageUrl,
-          objects_to_remove: "person",
-          // input_image: imageUrl,
-          // image: imageUrl,
-          // mask_prompt: "Human",
-          // adjustment_factor: -25,
-          // negative_mask_prompt: "Wheels",
+          input_image: imageUrl,
+          negative_prompt: "a photo of a human",
+          translation_prompts: "a photo of a flowers",
         },
       },
     );
     console.log("Replicate API call successful. Output:", output);
     res.send({ result: output.result });
-
+    return;
     // Clean up the temporary image file after processing
-    fs.unlinkSync(filepath);
+    // fs.unlinkSync(filepath);
   } catch (error) {
     console.error("Error during Replicate API call:", error);
+    if (res.headersSent) {
+      // Log the error or handle it, but don't attempt to send another response
+      return;
+    }
     res
       .status(500)
       .send({ error: "Failed to call Replicate API", details: error.message });
