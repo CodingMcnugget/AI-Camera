@@ -21,6 +21,8 @@ const Urlencoded = bodyparser.urlencoded({ extended: true });
 
 // Serve static files from the public directory
 app.use(express.static("public"));
+app.use('/storage', express.static(path.join("public/storage")))
+app.use('/camera', express.static(path.join("public/camera")))
 //stronge
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -59,7 +61,7 @@ app.post("/api/image", upload.single("my-file"), async (req, res) => {
       },
     );
     console.log("Replicate API call successful. Output:", output);
-    res.send({ result: output.result });
+    res.send({ result: output.result});
 
     // Clean up the temporary image file after processing
     // fs.unlinkSync(filepath);

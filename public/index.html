@@ -1,17 +1,20 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Image Processor</title>
     <link rel="stylesheet" href="style.css" />
-</head>
-<body>
+  </head>
+  <body>
     <!-- Video element for displaying camera feed -->
-    <video id="video" width="640" height="480" autoplay></video>
-    <!-- The Button for capturing the image is removed based on instructions to capture image on any webpage location click -->
+    <video id="video" width="640" height="480" autoplay style="display: none"></video>
+    <canvas id="videoCanvas"></canvas>
+
+    <!-- Button for capturing the image -->
+    <!-- <button id="processImage">Capture Image</button> -->
     <!-- Element for displaying the processed image -->
-    <img id="resultImage" src="placeholder.jpg" alt="Result image" />
+    <!-- <img id="resultImage" src="placeholder.jpg" alt="Result image" /> -->
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
