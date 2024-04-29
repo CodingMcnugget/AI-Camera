@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       // Clear the canvas
       // context.clearRect(0, 0, canvas.width, canvas.height);
       // Draw the video frame
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
     // Loop this function
