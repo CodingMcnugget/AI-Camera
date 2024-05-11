@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (video.readyState === video.HAVE_ENOUGH_DATA && continueDrawing) {
       // Clear the canvas
       // context.clearRect(0, 0, canvas.width, canvas.height);
-      // Draw the video frame
-      canvas.width = window.innerWidth;
+      // Draw the video framek
+      canvas.width = window.innerHeight;
       canvas.height = window.innerHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
@@ -109,4 +109,3 @@ document.addEventListener("DOMContentLoaded", async function () {
     drawVideo(); // 确保重启绘制循环
   });
 });
- 
